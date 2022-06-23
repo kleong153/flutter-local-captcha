@@ -187,8 +187,8 @@ class _MyHomePageState extends State<MyHomePage> {
           TextFormField(
             initialValue: '${_configFormData.length}',
             decoration: const InputDecoration(
-              labelText: 'Captcha length',
-              hintText: 'Captcha length',
+              labelText: 'Captcha code length',
+              hintText: 'Captcha code length',
               isDense: true,
               border: OutlineInputBorder(),
             ),
@@ -197,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 final length = int.tryParse(value) ?? 0;
 
                 if (length < 1) {
-                  return '* Length must be greater than 0.';
+                  return '* Value must be greater than 0.';
                 }
 
                 return null;
@@ -254,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 final length = int.tryParse(value) ?? 0;
 
                 if (length < 1) {
-                  return '* Minute must be greater than 0.';
+                  return '* Value must be greater than 0.';
                 }
 
                 return null;

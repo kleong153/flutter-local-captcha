@@ -139,7 +139,9 @@ class _LocalCaptchaState extends State<LocalCaptcha> {
     super.initState();
 
     widget.controller.setOnValidateFn((code) {
-      if (DateTime.now().subtract(widget.codeExpireAfter).isAfter(_lastRefreshAt)) {
+      if (DateTime.now()
+          .subtract(widget.codeExpireAfter)
+          .isAfter(_lastRefreshAt)) {
         return LocalCaptchaValidation.codeExpired;
       }
 
@@ -236,7 +238,9 @@ class CaptchaTextLayer extends StatelessWidget {
       alignment: Alignment.center,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: textList.map((e) => _char(String.fromCharCode(e))).toList(growable: false),
+        children: textList
+            .map((e) => _char(String.fromCharCode(e)))
+            .toList(growable: false),
       ),
     );
   }
@@ -246,7 +250,8 @@ class CaptchaTextLayer extends StatelessWidget {
 
     final transform3dPerspective = Matrix4.identity()
       ..setEntry(3, 2, 0.01)
-      ..rotateX(((random.nextInt(3) + 4) * 0.1) * (random.nextInt(10) >= 5 ? 1 : -1));
+      ..rotateX(
+          ((random.nextInt(1) + 2) * 0.1) * (random.nextInt(10) >= 5 ? 1 : -1));
 
     var mFontSize = 0.0;
 
@@ -259,7 +264,8 @@ class CaptchaTextLayer extends StatelessWidget {
       final fontSizeWithTextLength = (autoFontSize * text.length);
 
       if (autoFontSize * text.length > width) {
-        final overflow = (fontSizeWithTextLength - width) / fontSizeWithTextLength * 100;
+        final overflow =
+            (fontSizeWithTextLength - width) / fontSizeWithTextLength * 100;
 
         autoFontSize = height * (fontScale - (fontScale * overflow / 100));
         autoFontSize /= 0.8;
@@ -272,7 +278,8 @@ class CaptchaTextLayer extends StatelessWidget {
       transform: transform3dPerspective,
       alignment: FractionalOffset.center,
       child: Transform.rotate(
-        angle: ((random.nextInt(25) + 5) * pi / 180) * (random.nextInt(10) >= 5 ? 1 : -1),
+        angle: ((random.nextInt(25) + 5) * pi / 180) *
+            (random.nextInt(10) >= 5 ? 1 : -1),
         child: Transform.translate(
           offset: Offset(
             random.nextInt(10) * (random.nextInt(10) >= 5 ? 1 : -1),
@@ -287,7 +294,9 @@ class CaptchaTextLayer extends StatelessWidget {
                 style: TextStyle(
                   color: colors[random.nextInt(colors.length)],
                   fontSize: mFontSize,
-                  fontWeight: ((random.nextInt(10) >= 5 ? FontWeight.normal : FontWeight.bold)),
+                  fontWeight: (random.nextInt(10) >= 5
+                      ? FontWeight.normal
+                      : FontWeight.bold),
                 ),
               ),
             ),

@@ -80,6 +80,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     validator: (value) {
                       if (value != null && value.isNotEmpty) {
+                        if (value.length != _configFormData.length) {
+                          return '* Code must be length of ${_configFormData.length}.';
+                        }
+
                         final validation = _localCaptchaController.validate(value);
 
                         switch (validation) {

@@ -17,7 +17,7 @@ This is NOT a real anti-bot solution and is NOT recommended to use in production
 
 ```yaml
 dependencies:
-  local_captcha: ^1.0.0
+  local_captcha: ^1.0.1
 ```
 
 ## Import
@@ -61,6 +61,24 @@ LocalCaptcha(
   chars: 'abdefghnryABDEFGHNQRY3468',
   length: 5,
   fontSize: 80.0,
+  textColors: [
+    Colors.black54,
+    Colors.grey,
+    Colors.blueGrey,
+    Colors.redAccent,
+    Colors.teal,
+    Colors.amber,
+    Colors.brown,
+  ],
+  noiseColors: [
+    Colors.black54,
+    Colors.grey,
+    Colors.blueGrey,
+    Colors.redAccent,
+    Colors.teal,
+    Colors.amber,
+    Colors.brown,
+  ],
   caseSensitive: false,
   codeExpireAfter: Duration(minutes: 10),
 );
@@ -68,4 +86,4 @@ LocalCaptcha(
 
 ## Example
 
-See the complete example at **./example/main.dart** file.
+See the complete example at GitHub repo, **./example/main.dart** file.

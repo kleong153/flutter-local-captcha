@@ -85,6 +85,9 @@ class LocalCaptcha extends StatefulWidget {
   /// Condition for code validation.
   final Duration codeExpireAfter;
 
+  /// Value of captcha when it's generated
+  final Function(String)? onCaptchaGenerated;
+
   const LocalCaptcha({
     Key? key,
     required this.controller,
@@ -98,6 +101,7 @@ class LocalCaptcha extends StatefulWidget {
     this.noiseColors,
     this.caseSensitive = false,
     this.codeExpireAfter = const Duration(minutes: 10),
+    this.onCaptchaGenerated,
   })  : assert(length > 0),
         assert(height <= width),
         super(key: key);
@@ -132,6 +136,7 @@ class _LocalCaptchaState extends State<LocalCaptcha> {
 
       _randomText += String.fromCharCode(charList[index]);
     }
+    widget.onCaptchaGenerated?.call(_randomText);
   }
 
   @override

@@ -69,6 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     fontSize: _configFormData.fontSize > 0 ? _configFormData.fontSize : null,
                     caseSensitive: _configFormData.caseSensitive,
                     codeExpireAfter: _configFormData.codeExpireAfter,
+                    onCaptchaGenerated: (String captcha){
+                      debugPrint("Captcha $captcha");
+                    },
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(

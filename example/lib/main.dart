@@ -6,13 +6,14 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Local Captcha Example',
       theme: ThemeData(
+        useMaterial3: false,
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(),
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -69,8 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     fontSize: _configFormData.fontSize > 0 ? _configFormData.fontSize : null,
                     caseSensitive: _configFormData.caseSensitive,
                     codeExpireAfter: _configFormData.codeExpireAfter,
-                    onCaptchaGenerated: (String captcha){
-                      debugPrint("Captcha $captcha");
+                    onCaptchaGenerated: (captcha) {
+                      debugPrint('Generated captcha: $captcha');
                     },
                   ),
                   const SizedBox(height: 16.0),
@@ -139,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: ElevatedButton(
                       onPressed: () => _localCaptchaController.refresh(),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.blueGrey,
+                        backgroundColor: Colors.blueGrey,
                       ),
                       child: const Text('Refresh'),
                     ),

@@ -1,12 +1,12 @@
 name: local_captcha
 description: A fake captcha widget that helps speed up the development of prototype/demo app.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/kleong153
 repository: https://github.com/kleong153/flutter-local-captcha
 issue_tracker: https://github.com/kleong153/flutter-local-captcha/issues
 
 environment:
-  sdk: '>=3.3.1 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:

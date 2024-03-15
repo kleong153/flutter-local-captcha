@@ -17,7 +17,7 @@ This is NOT a real anti-bot solution and is NOT recommended to use in production
 
 ```yaml
 dependencies:
-  local_captcha: ^1.0.2
+  local_captcha: ^1.0.3
 ```
 
 ## Import

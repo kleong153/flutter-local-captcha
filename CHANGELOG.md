@@ -1,3 +1,7 @@
+## 1.0.3 - 2024-03-15
+
+Fix minimum required Flutter version.
+
 ## 1.0.2 - 2024-03-15
 
 Upgrade Flutter version to 3.19.3. Add support to get generated captcha value.

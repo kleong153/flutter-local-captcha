@@ -1,3 +1,7 @@
+## 1.0.3+1 - 2024-03-21
+
+Add known issues to readme.
+
 ## 1.0.3 - 2024-03-15
 
 Fix minimum required Flutter version.

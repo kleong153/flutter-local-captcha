@@ -67,7 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     backgroundColor: Colors.grey[100]!,
                     chars: _configFormData.chars,
                     length: _configFormData.length,
-                    fontSize: _configFormData.fontSize > 0 ? _configFormData.fontSize : null,
+                    fontSize: _configFormData.fontSize > 0
+                        ? _configFormData.fontSize
+                        : null,
                     caseSensitive: _configFormData.caseSensitive,
                     codeExpireAfter: _configFormData.codeExpireAfter,
                     onCaptchaGenerated: (captcha) {
@@ -88,7 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           return '* Code must be length of ${_configFormData.length}.';
                         }
 
-                        final validation = _localCaptchaController.validate(value);
+                        final validation =
+                            _localCaptchaController.validate(value);
 
                         switch (validation) {
                           case LocalCaptchaValidation.invalidCode:
@@ -121,7 +124,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 title: Text('Code: "$_inputCode" is valid.'),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.of(context).pop(),
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
                                     child: const Text('OK'),
                                   ),
                                 ],
@@ -213,18 +217,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
               return '* Required field.';
             },
-            onSaved: (value) => _configFormData.length = int.tryParse(value ?? '1') ?? 1,
+            onSaved: (value) =>
+                _configFormData.length = int.tryParse(value ?? '1') ?? 1,
           ),
           const SizedBox(height: 16.0),
           TextFormField(
-            initialValue: '${_configFormData.fontSize > 0 ? _configFormData.fontSize : ''}',
+            initialValue:
+                '${_configFormData.fontSize > 0 ? _configFormData.fontSize : ''}',
             decoration: const InputDecoration(
               labelText: 'Font size (optional)',
               hintText: 'Font size (optional)',
               isDense: true,
               border: OutlineInputBorder(),
             ),
-            onSaved: (value) => _configFormData.fontSize = double.tryParse(value ?? '0.0') ?? 0.0,
+            onSaved: (value) => _configFormData.fontSize =
+                double.tryParse(value ?? '0.0') ?? 0.0,
           ),
           const SizedBox(height: 16.0),
           DropdownButtonFormField<bool>(
@@ -246,7 +253,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('Yes'),
               ),
             ],
-            onChanged: (value) => _configFormData.caseSensitive = value ?? false,
+            onChanged: (value) =>
+                _configFormData.caseSensitive = value ?? false,
           ),
           const SizedBox(height: 16.0),
           TextFormField(
@@ -270,7 +278,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
               return '* Required field.';
             },
-            onSaved: (value) => _configFormData.codeExpireAfter = Duration(minutes: int.tryParse(value ?? '1') ?? 1),
+            onSaved: (value) => _configFormData.codeExpireAfter =
+                Duration(minutes: int.tryParse(value ?? '1') ?? 1),
           ),
           const SizedBox(height: 16.0),
           SizedBox(

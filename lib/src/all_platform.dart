@@ -3,9 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:math';
-import 'dart:ui';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 enum LocalCaptchaValidation {
   /// The code is valid without any issue.
@@ -122,7 +124,6 @@ class _LocalCaptchaState extends State<LocalCaptcha> {
 
   var _lastRefreshAt = DateTime.fromMillisecondsSinceEpoch(0);
   var _randomText = '';
-  var _isCaptchaReady = false;
 
   void _generateRandomText() {
     final random = Random();
@@ -162,15 +163,6 @@ class _LocalCaptchaState extends State<LocalCaptcha> {
 
       return LocalCaptchaValidation.invalidCode;
     });
-
-    // Hacky way to deal with CustomPaint keep repainting due to affect by mouse region activity.
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Future.delayed(const Duration(milliseconds: 600), () {
-        setState(() {
-          _isCaptchaReady = true;
-        });
-      });
-    });
   }
 
   @override
@@ -190,26 +182,15 @@ class _LocalCaptchaState extends State<LocalCaptcha> {
           decoration: BoxDecoration(
             color: widget.backgroundColor,
           ),
-          child: Visibility(
-            visible: _isCaptchaReady,
-            child: RepaintBoundary(
-              child: Stack(
-                children: [
-                  CaptchaTextLayer(
-                    text: _randomText,
-                    fontSize: widget.fontSize,
-                    height: widget.height,
-                    width: widget.width,
-                    colors: widget.textColors ?? _defaultColors,
-                  ),
-                  CaptchaNoiseLayer(
-                    height: widget.height,
-                    width: widget.width,
-                    colors: widget.noiseColors ?? _defaultColors,
-                  ),
-                ],
-              ),
-            ),
+          child: _CacheableCaptchaLayers(
+            key: ValueKey(_randomText),
+            text: _randomText,
+            height: widget.height,
+            width: widget.width,
+            backgroundColor: widget.backgroundColor,
+            textColors: widget.textColors ?? _defaultColors,
+            noiseColors: widget.noiseColors ?? _defaultColors,
+            fontSize: widget.fontSize,
           ),
         );
       },
@@ -217,15 +198,125 @@ class _LocalCaptchaState extends State<LocalCaptcha> {
   }
 }
 
-class CaptchaTextLayer extends StatelessWidget {
+class _CacheableCaptchaLayers extends StatefulWidget {
+  final String text;
+  final double height;
+  final double width;
+  final Color backgroundColor;
+  final List<Color> textColors;
+  final List<Color> noiseColors;
+  final double? fontSize;
+
+  const _CacheableCaptchaLayers({
+    super.key,
+    required this.text,
+    required this.height,
+    required this.width,
+    required this.backgroundColor,
+    required this.textColors,
+    required this.noiseColors,
+    this.fontSize,
+  });
+
+  @override
+  State<_CacheableCaptchaLayers> createState() =>
+      _CacheableCaptchaLayersState();
+}
+
+class _CacheableCaptchaLayersState extends State<_CacheableCaptchaLayers> {
+  final _captchaBoundaryGlobalKey = GlobalKey();
+  final _captchaImageByteDataVN = ValueNotifier<ByteData?>(null);
+
+  var _isCaptchaReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.microtask(() async {
+        final boundary = _captchaBoundaryGlobalKey.currentContext
+            ?.findRenderObject() as RenderRepaintBoundary?;
+
+        if (boundary != null) {
+          final boundaryImage = await boundary.toImage(pixelRatio: 1.0);
+
+          _captchaImageByteDataVN.value =
+              await boundaryImage.toByteData(format: ui.ImageByteFormat.png);
+
+          if (mounted) {
+            setState(() {
+              _isCaptchaReady = true;
+            });
+          }
+        } else {
+          setState(() {
+            _isCaptchaReady = true;
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: ValueKey(widget.text),
+      children: [
+        Visibility(
+          visible: !_isCaptchaReady,
+          child: RepaintBoundary(
+            key: _captchaBoundaryGlobalKey,
+            child: Stack(
+              children: [
+                if (!_isCaptchaReady)
+                  _CaptchaTextLayer(
+                    text: widget.text,
+                    fontSize: widget.fontSize,
+                    height: widget.height,
+                    width: widget.width,
+                    colors: widget.textColors,
+                  ),
+                if (!_isCaptchaReady)
+                  _CaptchaNoiseLayer(
+                    height: widget.height,
+                    width: widget.width,
+                    colors: widget.noiseColors,
+                  ),
+              ],
+            ),
+          ),
+        ),
+        Visibility(
+          visible: _isCaptchaReady,
+          child: ValueListenableBuilder(
+            valueListenable: _captchaImageByteDataVN,
+            builder: (context, captchaImageByteData, child) {
+              if (captchaImageByteData == null) {
+                return const SizedBox.shrink();
+              }
+
+              return Image.memory(
+                captchaImageByteData.buffer.asUint8List(),
+                height: widget.height,
+                width: widget.width,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CaptchaTextLayer extends StatelessWidget {
   final String text;
   final double? fontSize;
   final double height;
   final double width;
   final List<Color> colors;
 
-  const CaptchaTextLayer({
-    super.key,
+  const _CaptchaTextLayer({
     required this.text,
     this.fontSize,
     required this.height,
@@ -312,13 +403,12 @@ class CaptchaTextLayer extends StatelessWidget {
   }
 }
 
-class CaptchaNoiseLayer extends StatelessWidget {
+class _CaptchaNoiseLayer extends StatelessWidget {
   final double height;
   final double width;
   final List<Color> colors;
 
-  const CaptchaNoiseLayer({
-    super.key,
+  const _CaptchaNoiseLayer({
     required this.height,
     required this.width,
     required this.colors,
@@ -327,7 +417,7 @@ class CaptchaNoiseLayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: CaptchaNoisePainter(
+      painter: _CaptchaNoisePainter(
         height: height,
         width: width,
         colors: colors,
@@ -336,12 +426,12 @@ class CaptchaNoiseLayer extends StatelessWidget {
   }
 }
 
-class CaptchaNoisePainter extends CustomPainter {
+class _CaptchaNoisePainter extends CustomPainter {
   final double height;
   final double width;
   final List<Color> colors;
 
-  CaptchaNoisePainter({
+  const _CaptchaNoisePainter({
     required this.height,
     required this.width,
     required this.colors,
@@ -363,7 +453,7 @@ class CaptchaNoisePainter extends CustomPainter {
         paint.color = colors[random.nextInt(colors.length)];
         paint.strokeWidth = random.nextDouble() * 2.0;
 
-        canvas.drawPoints(PointMode.points, [point], paint);
+        canvas.drawPoints(ui.PointMode.points, [point], paint);
       }
     }
 
@@ -390,5 +480,5 @@ class CaptchaNoisePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CaptchaNoisePainter oldDelegate) => false;
+  bool shouldRepaint(covariant _CaptchaNoisePainter oldDelegate) => false;
 }

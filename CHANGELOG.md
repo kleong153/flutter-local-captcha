@@ -1,3 +1,7 @@
+## 1.0.4 - 2024-03-22
+
+Amend the way of generate captcha. Change some internal widgets' class visibility from public to private.
+
 ## 1.0.3+1 - 2024-03-21
 
 Add known issues to readme.

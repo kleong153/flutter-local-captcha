@@ -11,7 +11,7 @@ This is NOT a real anti-bot solution and is NOT recommended to use in production
 - Easy to use. Highly customizable.
 
 ## Known Issues
-- Terrible scrolling performance on iOS devices when Impeller is enabled. As a temporary solution, you can disable Impeller by adding the '--no-enable-impeller' flag to the 'flutter run' command.
+- [Fixed] Terrible scrolling performance on iOS devices when Impeller is enabled. As a temporary solution, you can disable Impeller by adding the '--no-enable-impeller' flag to the 'flutter run' command.
 
 ## Live Preview
 [Website Demo](https://kcflutterlocalcaptcha.surge.sh)
@@ -20,7 +20,7 @@ This is NOT a real anti-bot solution and is NOT recommended to use in production
 
 ```yaml
 dependencies:
-  local_captcha: ^1.0.3
+  local_captcha: ^1.0.4
 ```
 
 ## Import

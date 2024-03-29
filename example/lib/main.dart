@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:local_captcha/local_captcha.dart';
 
@@ -33,12 +35,16 @@ class _MyHomePageState extends State<MyHomePage> {
   final _configFormKey = GlobalKey<FormState>();
   final _localCaptchaController = LocalCaptchaController();
   final _configFormData = ConfigFormData();
+  final _refreshButtonEnableVN = ValueNotifier(true);
 
   var _inputCode = '';
+  Timer? _refreshTimer = null;
 
   @override
   void dispose() {
     _localCaptchaController.dispose();
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
 
     super.dispose();
   }
@@ -141,13 +147,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   SizedBox(
                     height: 40.0,
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => _localCaptchaController.refresh(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueGrey,
-                      ),
-                      child: const Text('Refresh'),
-                    ),
+                    child: ValueListenableBuilder(
+                        valueListenable: _refreshButtonEnableVN,
+                        builder: (context, enable, child) {
+                          final onPressed = enable
+                              ? () {
+                                  if (_refreshTimer == null) {
+                                    // Prevent spam pressing refresh button.
+                                    _refreshTimer =
+                                        Timer(const Duration(seconds: 1), () {
+                                      _refreshButtonEnableVN.value = true;
+
+                                      _refreshTimer?.cancel();
+                                      _refreshTimer = null;
+                                    });
+
+                                    _refreshButtonEnableVN.value = false;
+                                    _localCaptchaController.refresh();
+                                  }
+                                }
+                              : null;
+
+                          return ElevatedButton(
+                            onPressed: onPressed,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueGrey,
+                            ),
+                            child: const Text('Refresh'),
+                          );
+                        }),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),

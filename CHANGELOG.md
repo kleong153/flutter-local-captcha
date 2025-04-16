@@ -1,3 +1,7 @@
+## 1.0.5 - 2025-04-16
+
+Fix toImage issue on Flutter Web.
+
 ## 1.0.4 - 2024-03-22
 
 Amend the way of generate captcha. Change some internal widgets' class visibility from public to private.

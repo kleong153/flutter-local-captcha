@@ -233,8 +233,9 @@ class _CacheableCaptchaLayersState extends State<_CacheableCaptchaLayers> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Future.microtask(() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // v1.0.5: Fix toImage issue on Flutter Web.
+      Future.delayed(const Duration(milliseconds: 100), () async {
         final boundary = _captchaBoundaryGlobalKey.currentContext
             ?.findRenderObject() as RenderRepaintBoundary?;
 
@@ -260,31 +261,44 @@ class _CacheableCaptchaLayersState extends State<_CacheableCaptchaLayers> {
 
   @override
   Widget build(BuildContext context) {
+    // v1.0.4: amend the way of generate captcha image to resolve screen flickering when scrolling on iOS.
+    // When generating captcha layer, cover it with container for improve visual experience purpose,
+    // then convert it to an in-memory image. Finally, hide the generated captcha layer, and show the
+    // lightweight image instead for improve scrolling performance.
     return Column(
       key: ValueKey(widget.text),
       children: [
         Visibility(
           visible: !_isCaptchaReady,
-          child: RepaintBoundary(
-            key: _captchaBoundaryGlobalKey,
-            child: Stack(
-              children: [
-                if (!_isCaptchaReady)
-                  _CaptchaTextLayer(
-                    text: widget.text,
-                    fontSize: widget.fontSize,
-                    height: widget.height,
-                    width: widget.width,
-                    colors: widget.textColors,
-                  ),
-                if (!_isCaptchaReady)
-                  _CaptchaNoiseLayer(
-                    height: widget.height,
-                    width: widget.width,
-                    colors: widget.noiseColors,
-                  ),
-              ],
-            ),
+          child: Stack(
+            children: [
+              RepaintBoundary(
+                key: _captchaBoundaryGlobalKey,
+                child: Stack(
+                  children: [
+                    if (!_isCaptchaReady)
+                      _CaptchaTextLayer(
+                        text: widget.text,
+                        fontSize: widget.fontSize,
+                        height: widget.height,
+                        width: widget.width,
+                        colors: widget.textColors,
+                      ),
+                    if (!_isCaptchaReady)
+                      _CaptchaNoiseLayer(
+                        height: widget.height,
+                        width: widget.width,
+                        colors: widget.noiseColors,
+                      ),
+                  ],
+                ),
+              ),
+              Container(
+                height: widget.height,
+                width: widget.width,
+                color: widget.backgroundColor,
+              ),
+            ],
           ),
         ),
         Visibility(

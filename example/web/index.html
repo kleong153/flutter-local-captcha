@@ -21,7 +21,7 @@
   <meta name="description" content="A new Flutter project.">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="example">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -33,7 +33,7 @@
   <link rel="manifest" href="manifest.json">
 
   <style>
-    .loading {
+    .app-loading {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -45,7 +45,7 @@
       transform: translate(-50%, -50%);
     }
 
-    .loader {
+    .app-loader {
       border: 8px solid #F4F6F9;
       border-radius: 50%;
       border-top: 8px solid #347BDE;
@@ -74,35 +74,25 @@
       }
     }
   </style>
-
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = null;
-  </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
 </head>
 <body>
-  <div class="loading">
-    <div class="loader"></div>
+  <div class="app-loading">
+    <div class="app-loader"></div>
   </div>
 
   <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            var el = document.getElementsByClassName('loading')[0];
-            el.remove();
+    {{flutter_js}}
+    {{flutter_build_config}}
 
-            appRunner.runApp();
-          });
-        }
-      });
+    _flutter.loader.load({
+      onEntrypointLoaded: async function(engineInitializer) {
+        const appRunner = await engineInitializer.initializeEngine();
+
+        var el = document.getElementsByClassName('app-loading')[0];
+        el.remove();
+
+        await appRunner.runApp();
+      }
     });
   </script>
 </body>

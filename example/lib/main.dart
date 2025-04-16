@@ -14,10 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Local Captcha Example',
-      theme: ThemeData(
-        useMaterial3: false,
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(useMaterial3: false, primarySwatch: Colors.blue),
       home: const MyHomePage(),
     );
   }
@@ -38,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _refreshButtonEnableVN = ValueNotifier(true);
 
   var _inputCode = '';
-  Timer? _refreshTimer = null;
+  Timer? _refreshTimer;
 
   @override
   void dispose() {
@@ -52,9 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Local Captcha Example'),
-      ),
+      appBar: AppBar(title: const Text('Local Captcha Example')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -73,9 +68,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     backgroundColor: Colors.grey[100]!,
                     chars: _configFormData.chars,
                     length: _configFormData.length,
-                    fontSize: _configFormData.fontSize > 0
-                        ? _configFormData.fontSize
-                        : null,
+                    fontSize:
+                        _configFormData.fontSize > 0
+                            ? _configFormData.fontSize
+                            : null,
                     caseSensitive: _configFormData.caseSensitive,
                     codeExpireAfter: _configFormData.codeExpireAfter,
                     onCaptchaGenerated: (captcha) {
@@ -96,8 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           return '* Code must be length of ${_configFormData.length}.';
                         }
 
-                        final validation =
-                            _localCaptchaController.validate(value);
+                        final validation = _localCaptchaController.validate(
+                          value,
+                        );
 
                         switch (validation) {
                           case LocalCaptchaValidation.invalidCode:
@@ -130,8 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 title: Text('Code: "$_inputCode" is valid.'),
                                 actions: [
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
+                                    onPressed:
+                                        () => Navigator.of(context).pop(),
                                     child: const Text('OK'),
                                   ),
                                 ],
@@ -148,34 +145,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 40.0,
                     width: double.infinity,
                     child: ValueListenableBuilder(
-                        valueListenable: _refreshButtonEnableVN,
-                        builder: (context, enable, child) {
-                          final onPressed = enable
-                              ? () {
+                      valueListenable: _refreshButtonEnableVN,
+                      builder: (context, enable, child) {
+                        final onPressed =
+                            enable
+                                ? () {
                                   if (_refreshTimer == null) {
                                     // Prevent spam pressing refresh button.
-                                    _refreshTimer =
-                                        Timer(const Duration(seconds: 1), () {
-                                      _refreshButtonEnableVN.value = true;
+                                    _refreshTimer = Timer(
+                                      const Duration(seconds: 1),
+                                      () {
+                                        _refreshButtonEnableVN.value = true;
 
-                                      _refreshTimer?.cancel();
-                                      _refreshTimer = null;
-                                    });
+                                        _refreshTimer?.cancel();
+                                        _refreshTimer = null;
+                                      },
+                                    );
 
                                     _refreshButtonEnableVN.value = false;
                                     _localCaptchaController.refresh();
                                   }
                                 }
-                              : null;
+                                : null;
 
-                          return ElevatedButton(
-                            onPressed: onPressed,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueGrey,
-                            ),
-                            child: const Text('Refresh'),
-                          );
-                        }),
+                        return ElevatedButton(
+                          onPressed: onPressed,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueGrey,
+                          ),
+                          child: const Text('Refresh'),
+                        );
+                      },
+                    ),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -245,8 +246,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
               return '* Required field.';
             },
-            onSaved: (value) =>
-                _configFormData.length = int.tryParse(value ?? '1') ?? 1,
+            onSaved:
+                (value) =>
+                    _configFormData.length = int.tryParse(value ?? '1') ?? 1,
           ),
           const SizedBox(height: 16.0),
           TextFormField(
@@ -258,8 +260,10 @@ class _MyHomePageState extends State<MyHomePage> {
               isDense: true,
               border: OutlineInputBorder(),
             ),
-            onSaved: (value) => _configFormData.fontSize =
-                double.tryParse(value ?? '0.0') ?? 0.0,
+            onSaved:
+                (value) =>
+                    _configFormData.fontSize =
+                        double.tryParse(value ?? '0.0') ?? 0.0,
           ),
           const SizedBox(height: 16.0),
           DropdownButtonFormField<bool>(
@@ -272,17 +276,11 @@ class _MyHomePageState extends State<MyHomePage> {
               border: OutlineInputBorder(),
             ),
             items: const [
-              DropdownMenuItem(
-                value: false,
-                child: Text('No'),
-              ),
-              DropdownMenuItem(
-                value: true,
-                child: Text('Yes'),
-              ),
+              DropdownMenuItem(value: false, child: Text('No')),
+              DropdownMenuItem(value: true, child: Text('Yes')),
             ],
-            onChanged: (value) =>
-                _configFormData.caseSensitive = value ?? false,
+            onChanged:
+                (value) => _configFormData.caseSensitive = value ?? false,
           ),
           const SizedBox(height: 16.0),
           TextFormField(
@@ -306,8 +304,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
               return '* Required field.';
             },
-            onSaved: (value) => _configFormData.codeExpireAfter =
-                Duration(minutes: int.tryParse(value ?? '1') ?? 1),
+            onSaved:
+                (value) =>
+                    _configFormData.codeExpireAfter = Duration(
+                      minutes: int.tryParse(value ?? '1') ?? 1,
+                    ),
           ),
           const SizedBox(height: 16.0),
           SizedBox(

@@ -104,8 +104,8 @@ class LocalCaptcha extends StatefulWidget {
     this.caseSensitive = false,
     this.codeExpireAfter = const Duration(minutes: 10),
     this.onCaptchaGenerated,
-  })  : assert(length > 0),
-        assert(height <= width);
+  }) : assert(length > 0),
+       assert(height <= width);
 
   @override
   State<LocalCaptcha> createState() => _LocalCaptchaState();
@@ -179,9 +179,7 @@ class _LocalCaptchaState extends State<LocalCaptcha> {
           height: widget.height,
           width: widget.width,
           clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: widget.backgroundColor,
-          ),
+          decoration: BoxDecoration(color: widget.backgroundColor),
           child: _CacheableCaptchaLayers(
             key: ValueKey(_randomText),
             text: _randomText,
@@ -236,14 +234,16 @@ class _CacheableCaptchaLayersState extends State<_CacheableCaptchaLayers> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // v1.0.5: Fix toImage issue on Flutter Web.
       Future.delayed(const Duration(milliseconds: 100), () async {
-        final boundary = _captchaBoundaryGlobalKey.currentContext
-            ?.findRenderObject() as RenderRepaintBoundary?;
+        final boundary =
+            _captchaBoundaryGlobalKey.currentContext?.findRenderObject()
+                as RenderRepaintBoundary?;
 
         if (boundary != null) {
           final boundaryImage = await boundary.toImage(pixelRatio: 1.0);
 
-          _captchaImageByteDataVN.value =
-              await boundaryImage.toByteData(format: ui.ImageByteFormat.png);
+          _captchaImageByteDataVN.value = await boundaryImage.toByteData(
+            format: ui.ImageByteFormat.png,
+          );
 
           if (mounted) {
             setState(() {
@@ -358,10 +358,13 @@ class _CaptchaTextLayer extends StatelessWidget {
   Widget _char(String char) {
     final random = Random();
 
-    final transform3dPerspective = Matrix4.identity()
-      ..setEntry(3, 2, 0.01)
-      ..rotateX(
-          ((random.nextInt(1) + 2) * 0.1) * (random.nextInt(10) >= 5 ? 1 : -1));
+    final transform3dPerspective =
+        Matrix4.identity()
+          ..setEntry(3, 2, 0.01)
+          ..rotateX(
+            ((random.nextInt(1) + 2) * 0.1) *
+                (random.nextInt(10) >= 5 ? 1 : -1),
+          );
 
     var mFontSize = 0.0;
 
@@ -388,7 +391,8 @@ class _CaptchaTextLayer extends StatelessWidget {
       transform: transform3dPerspective,
       alignment: FractionalOffset.center,
       child: Transform.rotate(
-        angle: ((random.nextInt(25) + 5) * pi / 180) *
+        angle:
+            ((random.nextInt(25) + 5) * pi / 180) *
             (random.nextInt(10) >= 5 ? 1 : -1),
         child: Transform.translate(
           offset: Offset(
@@ -404,9 +408,10 @@ class _CaptchaTextLayer extends StatelessWidget {
                 style: TextStyle(
                   color: colors[random.nextInt(colors.length)],
                   fontSize: mFontSize,
-                  fontWeight: (random.nextInt(10) >= 5
-                      ? FontWeight.normal
-                      : FontWeight.bold),
+                  fontWeight:
+                      (random.nextInt(10) >= 5
+                          ? FontWeight.normal
+                          : FontWeight.bold),
                 ),
               ),
             ),
